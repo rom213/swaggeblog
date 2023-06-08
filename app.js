@@ -15,7 +15,7 @@ const options = {
     },
     servers: [
         {
-            url: 'http://3.12.162.138', // Cambia la URL base aquí
+            url: 'https://3.12.162.138', // Cambia la URL base aquí
         },
     ],
 },
