@@ -1,38 +1,40 @@
-//REQUERIMOS EXPRESS QUE ES UNA LIBRERIA
-const cors = require('cors');
 const express = require('express');
-const morgan = require('morgan');
-const swaggerRoutes=require('./routes/suaggerRoutes')
+const cors = require('cors');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerRoute=require('./routes/suaggerRoutes')
 
-const v1SwagerDocs=require('./swagger')
-//INICIAMOS LA APLICACION DE EXPRESS EN LA VARIABLE APP
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+        title: 'Blog API',
+        version: '1.0.0',
+    },
+    servers: [
+        {
+            url: 'http://3.12.162.138', // Cambia la URL base aquí
+        },
+    ],
+},
+apis: ['./routes/suaggerRoutes.js']
+};
+
+const swaggerSpec = swaggerJSDoc(options);
 const app = express();
-const port=+process.env.PORT || 3000
 
-app.use(morgan('dev'));
-app.use(express.json());
+// Configurar los encabezados CORS
 app.use(cors());
 
+// Ruta para la documentación Swagger
+app.use('/render',swaggerRoute)
+app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use((req, res, next) => {
-  console.log('Hello From The middleware! 🖐');
-  next();
+// Ruta para obtener el archivo JSON de la documentación Swagger
+app.get('/api/v1/docs.json', (req, res) => {
+  res.setHeader('Content-type', 'application/json');
+  res.send(swaggerSpec);
 });
 
-app.use((req, res, next) => {
-  req.requestTime = new Date();
-  next();
-});
+module.exports = app; // Exportar la aplicación Express
 
-
-
-
-//crearse la funcion y mostrar el id que venga por la req.params
-
-
-app.use('/api/v1/products', swaggerRoutes);
-v1SwagerDocs(app, port)
-
-//COLOCAR A MI APLICACION A ESCUCHAR POR EL PUERTO 3000
-
-module.exports=app;
