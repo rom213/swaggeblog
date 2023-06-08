@@ -1,4 +1,5 @@
 //REQUERIMOS EXPRESS QUE ES UNA LIBRERIA
+const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
 const swaggerRoutes=require('./routes/suaggerRoutes')
@@ -10,6 +11,7 @@ const port=+process.env.PORT || 3000
 
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cors());
 
 
 app.use((req, res, next) => {
